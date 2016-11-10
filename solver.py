@@ -13,7 +13,7 @@ def solve(current, end):
     down = current.index(0)+4
     grannar = [left, right, up, down]
 
-    # Exludera
+    # Exludera oönskade grannar
     for granne in grannar:
         if granne > 16 or granne < 0 or ((bad.count(granne) == 1 and abs(current.index(0)-granne) == 1)):
             grannar.remove(granne)
