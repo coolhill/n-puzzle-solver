@@ -5,7 +5,6 @@ bad = [0, 3, 4, 7, 8, 11, 12, 15]
 openNodes = [[start]]
 closedNodes = []
 
-
 # Solve using A* algoritm
 def solve(current, end):
     left = current.index(0)-1
