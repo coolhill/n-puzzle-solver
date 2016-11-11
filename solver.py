@@ -2,6 +2,7 @@ end = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
 start = [1, 2, 3, 4, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 bad = [0, 3, 4, 7, 8, 11, 12, 15]
 
+
 openNodes = [[start]]
 closedNodes = []
 
@@ -18,9 +19,10 @@ def solve(current, end):
         if granne > 16 or granne < 0 or ((bad.count(granne) == 1 and abs(current.index(0)-granne) == 1)):
             grannar.remove(granne)
 
-    # Generera successor-noder (utifrån nollans grannar)
+    # Generate successor-nodes (by the 0's grannar)
     for granne in grannar:
-        new = current
+        #new = current
+        new = [1, 2, 3, 4, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] #used for debugging purposes
         dummy = new[granne]
         new.remove(dummy)
         new.insert(current.index(0), dummy)
@@ -28,7 +30,7 @@ def solve(current, end):
         new.insert(granne, 0)
         if closedNodes.count(new) == 1:
             break
-
+        print(current)
         print(new)
         print(heuristic(new))
 
