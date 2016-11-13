@@ -52,4 +52,4 @@ def heuristic(n):
 if __name__ == '__main__':
     
     solve(start, end)
-#    print("fun")
+#    print("skoj")
