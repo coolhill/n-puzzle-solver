@@ -1,5 +1,13 @@
-end = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]
-start = [[1, 2, 3, 4], [0, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+end = [[1,   2,  3,  4],
+       [5,   6,  7,  8],
+       [9,  10, 11, 12],
+       [13, 14, 15,  0]]
+
+start = [[1,   2,  3,  4],
+         [8,   5,  6,  7],
+         [9,   10, 0, 11],
+         [12, 13, 14, 15]]
+
 bad = [0, 3, 4, 7, 8, 11, 12, 15]
 
 openNodes = [[start]]
@@ -9,19 +17,21 @@ closedNodes = []
 def solve(current, end):
 
 
+    for i in moves(current):
+        print(i)
     # Generate successor-nodes (by the 0's grannar)
-    for granne in moves(current):
-        new = current
-        dummy = new[granne]
-        new.remove(dummy)
-        new.insert(current.index(0), dummy)
-        new.remove(0)
-        new.insert(granne, 0)
-        if closedNodes.count(new) == 1:
-            break
-        print(current)
-        print(new)
-        print(heuristic(new))
+    # for granne in moves(current):
+    #     new = current
+    #     dummy = new[granne]
+    #     new.remove(dummy)
+    #     new.insert(current.index(0), dummy)
+    #     new.remove(0)
+    #     new.insert(granne, 0)
+    #     if closedNodes.count(new) == 1:
+    #         break
+    #     print(current)
+    #     print(new)
+    #     print(heuristic(new))
 
         # openNodes.append(new.insert(current.index(0), granne))
 
@@ -29,14 +39,22 @@ def solve(current, end):
 # Return array of legal moves.
 def moves(m):
 
-    
+    moves = []
     for i in m:
-        left = m[i][i.index(0)-1] # if zero is indexed in i path is found. 
-        right = m[i][i.index(0)+1]
-        up = m[i.index(0)-1][i]
-        down = m[i.index(0)+1][i]
+        if (0 in i and m.index(i) != 0):
+            moves.append(m[m.index(i) - 1][i.index(0)]) # if zero is indexed in i: legal move is found.
 
-    return [left, right, up, down]
+        if (0 in i and m.index(i) != 3):
+            moves.append(m[m.index(i) + 1][i.index(0)])
+        
+        if (0 in i and i.index(0) != 0):
+            moves.append(m[m.index(i)][i.index(0) - 1])
+
+        if (0 in i and i.index(0) != 3):
+            moves.append(m[m.index(i)][i.index(0) + 1])
+
+    print("lol")
+    return moves
     
 
 # Manhattan distance heuristic    
