@@ -8,30 +8,28 @@ start = [[1,   2,  3,  4],
          [9,   10, 0, 11],
          [12, 13, 14, 15]]
 
-bad = [0, 3, 4, 7, 8, 11, 12, 15]
-
 openNodes = [[start]]
 closedNodes = []
 
 # Solve using A* algoritm
 def solve(current, end):
 
-
+    # Generate successor-nodes (by the 0's grannar)
     for i in moves(current):
         print(i)
-    # Generate successor-nodes (by the 0's grannar)
-    # for granne in moves(current):
-    #     new = current
-    #     dummy = new[granne]
-    #     new.remove(dummy)
-    #     new.insert(current.index(0), dummy)
-    #     new.remove(0)
-    #     new.insert(granne, 0)
-    #     if closedNodes.count(new) == 1:
-    #         break
-    #     print(current)
-    #     print(new)
-    #     print(heuristic(new))
+
+        # wild west below
+        new = current
+        dummy = new[granne]
+        new.remove(dummy)
+        new.insert(current.index(0), dummy)
+        new.remove(0)
+        new.insert(granne, 0)
+        if closedNodes.count(new) == 1:
+            break
+        print(current)
+        print(new)
+        print(heuristic(new))
 
         # openNodes.append(new.insert(current.index(0), granne))
 
@@ -53,7 +51,6 @@ def moves(m):
         if (0 in i and i.index(0) != 3):
             moves.append(m[m.index(i)][i.index(0) + 1])
 
-    print("lol")
     return moves
     
 
