@@ -1,5 +1,5 @@
-end = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
-start = [1, 2, 3, 4, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+end = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]
+start = [[1, 2, 3, 4], [0, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 bad = [0, 3, 4, 7, 8, 11, 12, 15]
 
 openNodes = [[start]]
@@ -7,21 +7,11 @@ closedNodes = []
 
 # Solve using A* algoritm
 def solve(current, end):
-    left = current.index(0)-1
-    right = current.index(0)+1
-    up = current.index(0)-4
-    down = current.index(0)+4
-    grannar = [left, right, up, down]
 
-    # Excludes unwanted grannar
-    for granne in grannar:
-        if granne > 16 or granne < 0 or ((bad.count(granne) == 1 and abs(current.index(0)-granne) == 1)):
-            grannar.remove(granne)
 
     # Generate successor-nodes (by the 0's grannar)
-    for granne in grannar:
-        #new = current
-        new = [1, 2, 3, 4, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] #used for debugging purposes
+    for granne in moves(current):
+        new = current
         dummy = new[granne]
         new.remove(dummy)
         new.insert(current.index(0), dummy)
@@ -34,6 +24,20 @@ def solve(current, end):
         print(heuristic(new))
 
         # openNodes.append(new.insert(current.index(0), granne))
+
+
+# Return array of legal moves.
+def moves(m):
+
+    
+    for i in m:
+        left = m[i][i.index(0)-1] # if zero is indexed in i path is found. 
+        right = m[i][i.index(0)+1]
+        up = m[i.index(0)-1][i]
+        down = m[i.index(0)+1][i]
+
+    return [left, right, up, down]
+    
 
 # Manhattan distance heuristic    
 def heuristic(n):
