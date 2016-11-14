@@ -1,23 +1,25 @@
-end = [[1,   2,  3,  4],
+goal = [[1,   2,  3,  4],
        [5,   6,  7,  8],
        [9,  10, 11, 12],
        [13, 14, 15,  0]]
 
 start = [[1,   2,  3,  4],
          [8,   5,  6,  7],
-         [9,   10, 0, 11],
+         [9,   10, 11, 0],
          [12, 13, 14, 15]]
 
 openNodes = [[start]]
 closedNodes = []
 
 # Solve using A* algoritm
-def solve(current, end):
+def solve(current, goal):
 
     # Generate successor-nodes (by the 0's grannar)
     for i in moves(current):
         print(i)
 
+    print(heuristic(start))
+        
         # wild west below
         # new = current
         # dummy = new[granne]
@@ -40,7 +42,7 @@ def moves(m):
     moves = []
     for i in m:
         if (0 in i and m.index(i) != 0):
-            moves.append(m[m.index(i) - 1][i.index(0)]) # if zero is indexed in i: legal move is found.
+            moves.append(m[m.index(i) - 1][i.index(0)])
 
         if (0 in i and m.index(i) != 3):
             moves.append(m[m.index(i) + 1][i.index(0)])
@@ -56,18 +58,16 @@ def moves(m):
 # Manhattan distance heuristic    
 def heuristic(n):
 
-    n.insert(n.index(0), 16)
-    n.remove(0)
     distance = 0
-    for i in range(1, 16):
-        if i == n.index(i)+1: break
-        distance += abs(((i-1) - n.index(i))/4) + abs((i-1)%4 - n.index(i)%4)
+    for i in n:
+        for j in i:
+            if j == goal[n.index(i)][i.index(j)]: break # if no displacement -> break
 
-    n.insert(n.index(16), 0)
-    n.remove(16)
+            # distance += abs(goal.index() - n.index(j)) + abs(x.index(0) - i.index(j))
+
     return distance
 
 if __name__ == '__main__':
     
-    solve(start, end)
+    solve(start, goal)
 #    print("skoj")
