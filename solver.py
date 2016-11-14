@@ -53,7 +53,6 @@ def moves(m):
 
     return moves
     
-
 # Manhattan distance heuristic    
 def heuristic(n):
 
