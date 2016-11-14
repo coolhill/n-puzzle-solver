@@ -19,17 +19,17 @@ def solve(current, end):
         print(i)
 
         # wild west below
-        new = current
-        dummy = new[granne]
-        new.remove(dummy)
-        new.insert(current.index(0), dummy)
-        new.remove(0)
-        new.insert(granne, 0)
-        if closedNodes.count(new) == 1:
-            break
-        print(current)
-        print(new)
-        print(heuristic(new))
+        # new = current
+        # dummy = new[granne]
+        # new.remove(dummy)
+        # new.insert(current.index(0), dummy)
+        # new.remove(0)
+        # new.insert(granne, 0)
+        # if closedNodes.count(new) == 1:
+        #     break
+        # print(current)
+        # print(new)
+        # print(heuristic(new))
 
         # openNodes.append(new.insert(current.index(0), granne))
 
