@@ -69,7 +69,7 @@ def heuristic(n):
                         x = goal.index(a)
                         y = a.index(b)
                 
-            distance += abs(i - x) + abs(j - y)
+            distance += abs(i - x) + abs(j - y) # sum of deltas in axis
 
     return distance
 
