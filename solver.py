@@ -1,7 +1,7 @@
 goal = [[1,   2,  3,  4],
-       [5,   6,  7,  8],
-       [9,  10, 11, 12],
-       [13, 14, 15,  0]]
+        [5,   6,  7,  8],
+        [9,  10, 11, 12],
+        [13, 14, 15,  0]]
 
 start = [[1,   2,  3,  4],
          [8,   5,  6,  7],
@@ -18,20 +18,26 @@ def solve(current, goal):
     for i in moves(current):
         print(i)
 
-    print(heuristic(start))
-        
         # wild west below
-        # new = current
-        # dummy = new[granne]
-        # new.remove(dummy)
-        # new.insert(current.index(0), dummy)
-        # new.remove(0)
-        # new.insert(granne, 0)
-        # if closedNodes.count(new) == 1:
-        #     break
-        # print(current)
-        # print(new)
-        # print(heuristic(new))
+
+        # replace 0 with i and i with 0
+        for a in current:
+            for b in a:
+                if b == i:
+                    new[current.index(a)].remove(b)
+                    new[current.index(a)].insert(current.index 
+                        
+        new = current
+        dummy = new
+        new.insert(current.index(0), dummy)
+        new.remove(0)
+        new.insert(granne, 0)
+        
+        if closedNodes.count(new) == 1: break
+        
+        print(current)
+        print(new)
+        print(heuristic(new))
 
         # openNodes.append(new.insert(current.index(0), granne))
 
@@ -41,16 +47,16 @@ def moves(m):
 
     moves = []
     for i in m:
-        if (0 in i and m.index(i) != 0):
+        if (0 in i and m.index(i) != 0): # left?
             moves.append(m[m.index(i) - 1][i.index(0)])
 
-        if (0 in i and m.index(i) != 3):
+        if (0 in i and m.index(i) != 3): # right?
             moves.append(m[m.index(i) + 1][i.index(0)])
         
-        if (0 in i and i.index(0) != 0):
+        if (0 in i and i.index(0) != 0): # up?
             moves.append(m[m.index(i)][i.index(0) - 1])
 
-        if (0 in i and i.index(0) != 3):
+        if (0 in i and i.index(0) != 3): # down?
             moves.append(m[m.index(i)][i.index(0) + 1])
 
     return moves
@@ -59,11 +65,17 @@ def moves(m):
 def heuristic(n):
 
     distance = 0
-    for i in n:
-        for j in i:
-            if j == goal[n.index(i)][i.index(j)]: break # if no displacement -> break
+    for i in range(0,3):
+        for j in range(0,3):
+            if n[i][j] == goal[i][j]: break # if no displacement -> break
 
-            # distance += abs(goal.index() - n.index(j)) + abs(x.index(0) - i.index(j))
+            for a in goal:
+                for b in a:
+                    if b == n[i][j]:
+                        x = goal.index(a)
+                        y = a.index(b)
+                
+            distance += abs(i - x) + abs(j - y) # sum of deltas in axis
 
     return distance
 
