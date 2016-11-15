@@ -1,7 +1,7 @@
 goal = [[1,   2,  3,  4],
-       [5,   6,  7,  8],
-       [9,  10, 11, 12],
-       [13, 14, 15,  0]]
+        [5,   6,  7,  8],
+        [9,  10, 11, 12],
+        [13, 14, 15,  0]]
 
 start = [[1,   2,  3,  4],
          [8,   5,  6,  7],
@@ -59,11 +59,17 @@ def moves(m):
 def heuristic(n):
 
     distance = 0
-    for i in n:
-        for j in i:
-            if j == goal[n.index(i)][i.index(j)]: break # if no displacement -> break
+    for i in range(0,3):
+        for j in range(0,3):
+            if n[i][j] == goal[i][j]: break # if no displacement -> break
 
-            # distance += abs(goal.index() - n.index(j)) + abs(x.index(0) - i.index(j))
+            for a in goal:
+                for b in a:
+                    if b == n[i][j]:
+                        x = goal.index(a)
+                        y = a.index(b)
+                
+            distance += abs(i - x) + abs(j - y)
 
     return distance
 
