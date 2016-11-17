@@ -1,15 +1,3 @@
-goal = [[1,   2,  3,  4],
-        [5,   6,  7,  8],
-        [9,  10, 11, 12],
-        [13, 14, 15,  0]]
-
-start = [[1,   2,  3,  4],
-         [8,   5,  6,  7],
-         [9,   10, 11, 0],
-         [12, 13, 14, 15]]
-
-openNodes = [[start]]
-closedNodes = []
 
 # Experimental first generation of linked list solution. Linked lists
 # are made up of nodes, where each node contains a reference to the
@@ -26,7 +14,7 @@ class Node:
     def getBoard(self):
         return self.board
 
-    def switch(xPos, yPos): # switch with zero
+    def switch(self, xPos, yPos): # switch with zero
 
         for a in self.board:
             for b in a:
@@ -35,11 +23,24 @@ class Node:
                     
         self.board[xPos][yPos] = 0
 
-        
+goal = [[1,   2,  3,  4],
+        [5,   6,  7,  8],
+        [9,  10, 11, 12],
+        [13, 14, 15,  0]]
+
+start = Node([[1,   2,  3,  4],
+              [8,   5,  6,  7],
+              [9,   10, 11, 0],
+              [12, 13, 14, 15]])
+
+openNodes = [[start]]
+closedNodes = []
+
+
 # Solve using A* algoritm
 def solve(current, goal):
 
-    gen_nodes(moves(current), current)
+    gen_nodes(moves(current.getBoard()), current.getBoard())
     
     # if closedNodes.count(new) == 1: break
     # openNodes.append(new.insert(current.index(0), granne))
@@ -64,7 +65,7 @@ def gen_nodes(m, cur):
         #             print(b)
         #             new.switch(new.getBoard().index(a), b)
 
-        print(new.getBoard())
+        print(new)
     
 # Return array of legal moves.
 def moves(m):
