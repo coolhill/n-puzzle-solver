@@ -54,7 +54,7 @@ def gen_nodes(m, cur):
         new = Node(cur) # maybe this will fix concurrency bug
 
         # There is a problem with commented code below. Uncomment and
-        # see compilor error.
+        # see compiler error.
         
         # replace 0 with i and i with 0
         # for a in new.getBoard():
