@@ -41,18 +41,7 @@ def solve(current, goal):
 
     gen_nodes(moves(current), current)
     
-    # new = current
-    # dummy = new
-    # new.insert(current.index(0), dummy)
-    # new.remove(0)
-    # new.insert(granne, 0)
-    
     # if closedNodes.count(new) == 1: break
-    
-    # print(current)
-    # print(new)
-    # print(heuristic(new))
-    
     # openNodes.append(new.insert(current.index(0), granne))
         
     
@@ -63,6 +52,9 @@ def gen_nodes(m, cur):
         print(i)
 
         new = Node(cur) # maybe this will fix concurrency bug
+
+        # There is a problem with commented code below. Uncomment and
+        # see compilor error.
         
         # replace 0 with i and i with 0
         # for a in new.getBoard():
