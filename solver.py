@@ -14,7 +14,7 @@ class Node:
     def getBoard(self):
         return self.board
 
-    def switch(self, xPos, yPos): # switch with zero
+    def swap(self, xPos, yPos): # swap with zero
 
         for a in self.board:
             for b in a:
@@ -63,7 +63,7 @@ def gen_nodes(m, cur):
         #         if b == i:
         #             print(new.getBoard().index(a))
         #             print(b)
-        #             new.switch(new.getBoard().index(a), b)
+        #             new.swap(new.getBoard().index(a), b)
 
         print(new)
     
