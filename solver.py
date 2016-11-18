@@ -11,37 +11,61 @@ start = [[1,   2,  3,  4],
 openNodes = [[start]]
 closedNodes = []
 
+# Experimental first generation of linked list solution. Linked lists
+# are made up of nodes, where each node contains a reference to the
+# next node in the list. In addition, each node contains a unit of
+# data called the cargo(board).
+
+class Node:
+    def __init__(self, board=None, parent=None):
+        self.board = board
+        # self.heuristic = heuristic     # h-value
+        # self.moves = moves             # g-value
+        self.parent = parent
+
+    def getBoard(self):
+        return self.board
+
+    def switch(xPos, yPos): # switch with zero
+
+        for a in self.board:
+            for b in a:
+                if b == 0:
+                    self.board[self.board.index(a)][a.index(b)] = self.board[xPos][yPos]
+                    
+        self.board[xPos][yPos] = 0
+
+        
 # Solve using A* algoritm
 def solve(current, goal):
 
+    gen_nodes(moves(current), current)
+    
+    # if closedNodes.count(new) == 1: break
+    # openNodes.append(new.insert(current.index(0), granne))
+        
+    
+def gen_nodes(m, cur):
+            
     # Generate successor-nodes (by the 0's grannar)
-    for i in moves(current):
+    for i in m:
         print(i)
 
-        # wild west below
+        new = Node(cur) # maybe this will fix concurrency bug
 
+        # There is a problem with commented code below. Uncomment and
+        # see compiler error.
+        
         # replace 0 with i and i with 0
-        for a in current:
-            for b in a:
-                if b == i:
-                    new[current.index(a)].remove(b)
-                    new[current.index(a)].insert(current.index 
-                        
-        new = current
-        dummy = new
-        new.insert(current.index(0), dummy)
-        new.remove(0)
-        new.insert(granne, 0)
-        
-        if closedNodes.count(new) == 1: break
-        
-        print(current)
-        print(new)
-        print(heuristic(new))
+        # for a in new.getBoard():
+        #     for b in a:
+        #         if b == i:
+        #             print(new.getBoard().index(a))
+        #             print(b)
+        #             new.switch(new.getBoard().index(a), b)
 
-        # openNodes.append(new.insert(current.index(0), granne))
-
-
+        print(new.getBoard())
+    
 # Return array of legal moves.
 def moves(m):
 
