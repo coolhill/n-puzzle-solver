@@ -41,31 +41,29 @@ closedNodes = []
 def solve(current, goal):
 
     gen_nodes(moves(current.getBoard()), current.getBoard())
-    
+
     # if closedNodes.count(new) == 1: break
     # openNodes.append(new.insert(current.index(0), granne))
-        
+
     
-def gen_nodes(m, cur):
+def gen_nodes(n, cur):
             
     # Generate successor-nodes (by the 0's grannar)
-    for i in m:
-        print(i)
+    for i in n:
 
-        new = Node(cur) # maybe this will fix concurrency bug
-
-        # There is a problem with commented code below. Uncomment and
-        # see compiler error.
+        new = Node(cur) # maybe this will fix concurrency bug, NOPE DOESN'T SEEM LIKE IT
         
         # replace 0 with i and i with 0
-        # for a in new.getBoard():
-        #     for b in a:
-        #         if b == i:
-        #             print(new.getBoard().index(a))
-        #             print(b)
-        #             new.swap(new.getBoard().index(a), b)
+        for a in new.getBoard():
+            for b in a:
+                if b == i:
+                    xPos = new.getBoard().index(a)
+                    yPos = a.index(b)
 
-        print(new)
+        print(i)
+        print(new.getBoard())
+        new.swap(xPos, yPos)
+        # print(new.getBoard())
     
 # Return array of legal moves.
 def moves(m):
