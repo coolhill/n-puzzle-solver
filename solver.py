@@ -1,3 +1,4 @@
+from copy import deepcopy
 
 # Experimental first generation of linked list solution. Linked lists
 # are made up of nodes, where each node contains a reference to the
@@ -11,15 +12,11 @@ class Node:
         # self.moves = moves             # g-value
         self.parent = parent
 
-    def getBoard(self):
-        return self.board
-
     def swap(self, xPos, yPos): # swap with zero
 
         for a in self.board:
-            for b in a:
-                if b == 0:
-                    self.board[self.board.index(a)][a.index(b)] = self.board[xPos][yPos]
+            if 0 in a:
+                self.board[self.board.index(a)][a.index(0)] = self.board[xPos][yPos]
                     
         self.board[xPos][yPos] = 0
 
@@ -33,38 +30,37 @@ start = Node([[1,   2,  3,  4],
               [9,   10, 11, 0],
               [12, 13, 14, 15]])
 
-openNodes = [[start]]
+openNodes = [start]
 closedNodes = []
 
 
 # Solve using A* algoritm
 def solve(current, goal):
 
-    gen_nodes(moves(current.getBoard()), current.getBoard())
+    gen_nodes(moves(current.board), current)
 
-    # if closedNodes.count(new) == 1: break
-    # openNodes.append(new.insert(current.index(0), granne))
+    for a in openNodes:
+        print(a.board)
 
     
-def gen_nodes(n, cur):
+def gen_nodes(n, current):
             
     # Generate successor-nodes (by the 0's grannar)
     for i in n:
 
-        new = Node(cur) # maybe this will fix concurrency bug, NOPE DOESN'T SEEM LIKE IT
+        new = deepcopy(current)
         
         # replace 0 with i and i with 0
-        for a in new.getBoard():
-            for b in a:
-                if b == i:
-                    xPos = new.getBoard().index(a)
-                    yPos = a.index(b)
+        for a in new.board:
+            if i in a:
+                xPos = new.board.index(a)
+                yPos = a.index(i)
 
-        print(i)
-        print(new.getBoard())
         new.swap(xPos, yPos)
-        # print(new.getBoard())
-    
+
+        if closedNodes.count(new) == 1: break
+        openNodes.append(new)
+
 # Return array of legal moves.
 def moves(m):
 
