@@ -1,15 +1,4 @@
-goal = [[1,   2,  3,  4],
-        [5,   6,  7,  8],
-        [9,  10, 11, 12],
-        [13, 14, 15,  0]]
-
-start = [[1,   2,  3,  4],
-         [8,   5,  6,  7],
-         [9,   10, 11, 0],
-         [12, 13, 14, 15]]
-
-openNodes = [[start]]
-closedNodes = []
+from copy import deepcopy
 
 # Experimental first generation of linked list solution. Linked lists
 # are made up of nodes, where each node contains a reference to the
@@ -23,49 +12,55 @@ class Node:
         # self.moves = moves             # g-value
         self.parent = parent
 
-    def getBoard(self):
-        return self.board
-
-    def switch(xPos, yPos): # switch with zero
+    def swap(self, xPos, yPos): # swap with zero
 
         for a in self.board:
-            for b in a:
-                if b == 0:
-                    self.board[self.board.index(a)][a.index(b)] = self.board[xPos][yPos]
+            if 0 in a:
+                self.board[self.board.index(a)][a.index(0)] = self.board[xPos][yPos]
                     
         self.board[xPos][yPos] = 0
 
-        
+goal = [[1,   2,  3,  4],
+        [5,   6,  7,  8],
+        [9,  10, 11, 12],
+        [13, 14, 15,  0]]
+
+start = Node([[1,   2,  3,  4],
+              [8,   5,  6,  7],
+              [9,   10, 11, 0],
+              [12, 13, 14, 15]])
+
+openNodes = [start]
+closedNodes = []
+
+
 # Solve using A* algoritm
 def solve(current, goal):
 
-    gen_nodes(moves(current), current)
+    gen_nodes(moves(current.board), current)
+
+    for a in openNodes:
+        print(a.board)
+
     
-    # if closedNodes.count(new) == 1: break
-    # openNodes.append(new.insert(current.index(0), granne))
-        
-    
-def gen_nodes(m, cur):
+def gen_nodes(n, current):
             
     # Generate successor-nodes (by the 0's grannar)
-    for i in m:
-        print(i)
+    for i in n:
 
-        new = Node(cur) # maybe this will fix concurrency bug
-
-        # There is a problem with commented code below. Uncomment and
-        # see compiler error.
+        new = deepcopy(current)
         
         # replace 0 with i and i with 0
-        # for a in new.getBoard():
-        #     for b in a:
-        #         if b == i:
-        #             print(new.getBoard().index(a))
-        #             print(b)
-        #             new.switch(new.getBoard().index(a), b)
+        for a in new.board:
+            if i in a:
+                xPos = new.board.index(a)
+                yPos = a.index(i)
 
-        print(new.getBoard())
-    
+        new.swap(xPos, yPos)
+
+        if closedNodes.count(new) == 1: break
+        openNodes.append(new)
+
 # Return array of legal moves.
 def moves(m):
 
