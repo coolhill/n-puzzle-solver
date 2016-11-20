@@ -1,10 +1,5 @@
 from copy import deepcopy
 
-# Experimental first generation of linked list solution. Linked lists
-# are made up of nodes, where each node contains a reference to the
-# next node in the list. In addition, each node contains a unit of
-# data called the cargo(board).
-
 class Node:
     def __init__(self, board=None, parent=None):
         self.board = board
