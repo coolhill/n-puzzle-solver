@@ -1,60 +1,96 @@
 from copy import deepcopy
 
 class Node:
-    def __init__(self, board=None, parent=None):
+    def __init__(self, board=None, heuristic=None, gScore=None, fScore=None, parent=None):
         self.board = board
-        # self.heuristic = heuristic     # h-value
-        # self.moves = moves             # g-value
+        self.heuristic = heuristic
+        self.gScore = gScore
+        self.fScore = fScore
         self.parent = parent
 
-    def swap(self, xPos, yPos): # swap with zero
+    # swap with zero
+    def swap(self, xPos, yPos): 
 
         for a in self.board:
             if 0 in a:
                 self.board[self.board.index(a)][a.index(0)] = self.board[xPos][yPos]
                     
         self.board[xPos][yPos] = 0
-
-goal = [[1,   2,  3,  4],
-        [5,   6,  7,  8],
-        [9,  10, 11, 12],
-        [13, 14, 15,  0]]
-
-start = Node([[1,   2,  3,  4],
-              [8,   5,  6,  7],
-              [9,   10, 11, 0],
-              [12, 13, 14, 15]])
-
-openNodes = [start]
-closedNodes = []
-
+        self.heuristic = heuristic(self.board, goal) # heuristic has to be reevaluated
 
 # Solve using A* algoritm
-def solve(current, goal):
+def solve(start, goal):
 
-    gen_nodes(moves(current.board), current)
+    openNodes = [start]
+    closedNodes = []
 
-    for a in openNodes:
-        print(a.board)
+    start.heuristic = heuristic(start.board, goal)
+    start.gScore = 0 # cost from start to start is zero
+    start.fScore = heuristic(start.board, goal) # in beginning fScore is completely heuristic
 
-    
-def gen_nodes(n, current):
+    while openNodes:
+
+        current = lowest_fCost(openNodes)
+
+        if current.board == goal:
+            path = []
+            recalc_path(current)
+            return path
+
+        openNodes.remove(current)
+        closedNodes.append(current)
+
+        for node in childrenOf(current):
+
+            flag = False
+            if node.board == goal:
+                path = []
+                recalc_path(current, path)
+                return path
             
-    # Generate successor-nodes (by the 0's grannar)
-    for i in n:
+            for a in openNodes:
+                if a.board == node.board and a.fScore <= node.fScore: flag = True
+            for a in closedNodes:
+                if a.board == node.board and a.fScore <= node.fScore: flag = True
+            if flag: continue
 
-        new = deepcopy(current)
+            openNodes.append(node)
+
+
+def recalc_path(node, path):
+    path.append(node)
+    if node.parent == None: return 
+    recalc_path(node.parent, path)
+
+
+def lowest_fCost(nodes):
+    return sorted(nodes, key=lambda x: x.fScore, reverse=True)[-1]
+
+
+# Generate successor-nodes of parent
+def childrenOf(parent):
+            
+    children = []
+
+    for i in moves(parent.board):
+
+        node = deepcopy(parent)
         
-        # replace 0 with i and i with 0
-        for a in new.board:
+        for a in node.board:
             if i in a:
-                xPos = new.board.index(a)
+                xPos = node.board.index(a)
                 yPos = a.index(i)
 
-        new.swap(xPos, yPos)
+        node.swap(xPos, yPos)
+        node.parent = parent
+        node.heuristic = heuristic(node.board, goal)
+        node.gScore = node.gScore + 1
+        node.fScore = node.gScore + node.heuristic
+        
+        children.append(node)
 
-        if closedNodes.count(new) == 1: break
-        openNodes.append(new)
+    return children
+
 
 # Return array of legal moves.
 def moves(m):
@@ -76,12 +112,12 @@ def moves(m):
     return moves
     
 # Manhattan distance heuristic    
-def heuristic(n):
+def heuristic(n, goal):
 
     distance = 0
     for i in range(0,3):
         for j in range(0,3):
-            if n[i][j] == goal[i][j]: break # if no displacement -> break
+            if n[i][j] == goal[i][j]: break # break if no displacement
 
             for a in goal:
                 for b in a:
@@ -94,6 +130,17 @@ def heuristic(n):
     return distance
 
 if __name__ == '__main__':
+    goal = [[1,   2,  3,  4],
+            [5,   6,  7,  8],
+            [9,  10, 11, 12],
+            [13, 14, 15,  0]]
+
+    start = Node([[1,   0,  3,  4],
+                  [5,   2,  7,  8],
+                  [9,   6, 11, 12],
+                  [13, 10, 14,  15]])
     
-    solve(start, goal)
-#    print("skoj")
+    for a in solve(start, goal):
+        for b in a.board:
+            print(b)
+        print("")
