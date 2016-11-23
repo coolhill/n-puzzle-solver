@@ -30,15 +30,18 @@ def solve(start, goal):
 
     while openNodes:
 
+        print(lowest_fCost(openNodes).board)
         current = lowest_fCost(openNodes)
 
-        if current.board == goal: break
+        if current.board == goal: return current.board
 
         openNodes.remove(current)
         closedNodes.append(current)
 
         for node in childrenOf(current):
 
+            if node.board == goal: return node.board
+            
             for a in openNodes:
                 if a.board == node.board and a.fScore <= node.fScore: continue # This is not a better path!
 
@@ -49,8 +52,7 @@ def solve(start, goal):
 
 
 def lowest_fCost(nodes):
-
-    return sorted(nodes, key=lambda x: x.fScore, reverse=True)[0]
+    return sorted(nodes, key=lambda x: x.fScore, reverse=True)[-1]
 
 
 # Generate successor-nodes of parent
@@ -122,9 +124,7 @@ if __name__ == '__main__':
 
     start = Node([[1,   2,  3,  4],
                   [5,   6,  7,  8],
-                  [9,  10, 11, 12],
-                  [13, 14, 0,  15]])
-
-
+                  [9,   0, 11, 12],
+                  [13, 10, 14,  15]])
     
-    solve(start, goal)
+    print(solve(start, goal))
