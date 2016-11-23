@@ -22,7 +22,7 @@ class Node:
 def solve(start, goal):
 
     openNodes = [start]
-    closedNodes = [] 
+    closedNodes = []
 
     start.heuristic = heuristic(start.board, goal)
     start.gScore = 0 # cost from start to start is zero
@@ -32,7 +32,10 @@ def solve(start, goal):
 
         current = lowest_fCost(openNodes)
 
-        if current.board == goal: return current.board
+        if current.board == goal:
+            path = []
+            recalc_path(current)
+            return path
 
         openNodes.remove(current)
         closedNodes.append(current)
@@ -40,17 +43,24 @@ def solve(start, goal):
         for node in childrenOf(current):
 
             flag = False
-            if node.board == goal: return node.board
+            if node.board == goal:
+                path = []
+                recalc_path(current, path)
+                return path
             
             for a in openNodes:
                 if a.board == node.board and a.fScore <= node.fScore: flag = True
-
             for a in closedNodes:
                 if a.board == node.board and a.fScore <= node.fScore: flag = True
-
             if flag: continue
 
             openNodes.append(node)
+
+
+def recalc_path(node, path):
+    path.append(node)
+    if node.parent == None: return 
+    recalc_path(node.parent, path)
 
 
 def lowest_fCost(nodes):
@@ -125,9 +135,12 @@ if __name__ == '__main__':
             [9,  10, 11, 12],
             [13, 14, 15,  0]]
 
-    start = Node([[1,   2,  3,  4],
-                  [5,   6,  7,  8],
-                  [9,   0, 11, 12],
+    start = Node([[1,   0,  3,  4],
+                  [5,   2,  7,  8],
+                  [9,   6, 11, 12],
                   [13, 10, 14,  15]])
     
-    print(solve(start, goal))
+    for a in solve(start, goal):
+        for b in a.board:
+            print(b)
+        print("")
