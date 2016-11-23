@@ -30,7 +30,6 @@ def solve(start, goal):
 
     while openNodes:
 
-        print(lowest_fCost(openNodes).board)
         current = lowest_fCost(openNodes)
 
         if current.board == goal: return current.board
@@ -40,13 +39,16 @@ def solve(start, goal):
 
         for node in childrenOf(current):
 
+            flag = False
             if node.board == goal: return node.board
             
             for a in openNodes:
-                if a.board == node.board and a.fScore <= node.fScore: continue # This is not a better path!
+                if a.board == node.board and a.fScore <= node.fScore: flag = True
 
             for a in closedNodes:
-                if a.board == node.board and a.fScore <= node.fScore: continue 
+                if a.board == node.board and a.fScore <= node.fScore: flag = True
+
+            if flag: continue
 
             openNodes.append(node)
 
@@ -71,6 +73,7 @@ def childrenOf(parent):
 
         node.swap(xPos, yPos)
         node.parent = parent
+        node.heuristic = heuristic(node.board, goal)
         node.gScore = node.gScore + 1
         node.fScore = node.gScore + node.heuristic
         
