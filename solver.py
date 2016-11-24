@@ -30,11 +30,13 @@ def solve(start, goal):
 
     while openNodes:
 
-        current = lowest_fCost(openNodes)
+        current = sorted(openNodes, key=lambda x: x.f)[0]
 
         if current.q == goal:
             path = []
-            recalc_path(current)
+            while current.parent:
+                path.append(current.parent)
+                current = current.parent
             return path
 
         openNodes.remove(current)
@@ -42,30 +44,21 @@ def solve(start, goal):
 
         for node in childrenOf(current):
 
-            flag = False
-            if node.q == goal:
-                path = []
-                recalc_path(current, path)
-                return path
-            
-            for a in openNodes:
-                if a.q == node.q and a.f <= node.f: flag = True
-            for a in closedNodes:
-                if a.q == node.q and a.f <= node.f: flag = True
-            if flag: continue
+            if node in closedNodes:
+                continue
 
-            openNodes.append(node)
-
-
-def recalc_path(node, path):
-    path.append(node)
-    if node.parent != None: 
-        recalc_path(node.parent, path)
-
-
-def lowest_fCost(nodes):
-    return sorted(nodes, key=lambda x: x.f, reverse=True)[-1]
-
+            if node in openNodes:
+                new_g = current.g + 1
+                if node.g > new_g:
+                    node.g = new_g
+                    node.parent = current
+                
+            else:
+                node.g = current.g + 1
+                node.h = heuristic(node.q, goal)
+                node.f = node.g + node.h
+                node.parent = current
+                openNodes.append(node)
 
 # Generate successor-nodes of parent
 def childrenOf(parent):
@@ -82,10 +75,6 @@ def childrenOf(parent):
                 y = a.index(i)
 
         node.swap(x, y)
-        node.parent = parent
-        node.h = heuristic(node.q, goal)
-        node.g = node.g + 1
-        node.f = node.g + node.h
         
         children.append(node)
 
@@ -134,9 +123,9 @@ if __name__ == '__main__':
             [9,  10, 11, 12],
             [13, 14, 15,  0]]
 
-    start = Node([[2,   3,  4,  8],
-                  [1,   5,  6,  0],
-                  [10,  11, 7, 12],
+    start = Node([[2,   3,  4,  0],
+                  [1,   5,  6,  7],
+                  [10,  11, 12, 8],
                   [9, 13, 14,  15]])
     
     for a in solve(start, goal):
