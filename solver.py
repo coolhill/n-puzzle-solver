@@ -1,22 +1,22 @@
 from copy import deepcopy
 
 class Node:
-    def __init__(self, board=None, heuristic=None, gScore=None, fScore=None, parent=None):
-        self.board = board
-        self.heuristic = heuristic
-        self.gScore = gScore
-        self.fScore = fScore
+    def __init__(self, q=None, h=None, g=None, f=None, parent=None):
+        self.q = q     # positions
+        self.h = h     # heuristic
+        self.g = g     # moves
+        self.f = f 
         self.parent = parent
 
     # swap with zero
     def swap(self, xPos, yPos): 
 
-        for a in self.board:
+        for a in self.q:
             if 0 in a:
-                self.board[self.board.index(a)][a.index(0)] = self.board[xPos][yPos]
+                self.q[self.q.index(a)][a.index(0)] = self.q[xPos][yPos]
                     
-        self.board[xPos][yPos] = 0
-        self.heuristic = heuristic(self.board, goal) # heuristic has to be reevaluated
+        self.q[xPos][yPos] = 0
+        self.h = heuristic(self.q, goal) # heuristic has to be reevaluated
 
 # Solve using A* algoritm
 def solve(start, goal):
@@ -24,15 +24,15 @@ def solve(start, goal):
     openNodes = [start]
     closedNodes = []
 
-    start.heuristic = heuristic(start.board, goal)
-    start.gScore = 0 # cost from start to start is zero
-    start.fScore = heuristic(start.board, goal) # in beginning fScore is completely heuristic
+    start.h = heuristic(start.q, goal)
+    start.g = 0 # cost from start to start is zero
+    start.f = heuristic(start.q, goal) # in beginning f is completely heuristic
 
     while openNodes:
 
         current = lowest_fCost(openNodes)
 
-        if current.board == goal:
+        if current.q == goal:
             path = []
             recalc_path(current)
             return path
@@ -43,15 +43,15 @@ def solve(start, goal):
         for node in childrenOf(current):
 
             flag = False
-            if node.board == goal:
+            if node.q == goal:
                 path = []
                 recalc_path(current, path)
                 return path
             
             for a in openNodes:
-                if a.board == node.board and a.fScore <= node.fScore: flag = True
+                if a.q == node.q and a.f <= node.f: flag = True
             for a in closedNodes:
-                if a.board == node.board and a.fScore <= node.fScore: flag = True
+                if a.q == node.q and a.f <= node.f: flag = True
             if flag: continue
 
             openNodes.append(node)
@@ -59,12 +59,12 @@ def solve(start, goal):
 
 def recalc_path(node, path):
     path.append(node)
-    if node.parent == None: return 
-    recalc_path(node.parent, path)
+    if node.parent != None: 
+        recalc_path(node.parent, path)
 
 
 def lowest_fCost(nodes):
-    return sorted(nodes, key=lambda x: x.fScore, reverse=True)[-1]
+    return sorted(nodes, key=lambda x: x.f, reverse=True)[-1]
 
 
 # Generate successor-nodes of parent
@@ -72,20 +72,20 @@ def childrenOf(parent):
             
     children = []
 
-    for i in moves(parent.board):
+    for i in moves(parent.q):
 
         node = deepcopy(parent)
         
-        for a in node.board:
+        for a in node.q:
             if i in a:
-                xPos = node.board.index(a)
+                xPos = node.q.index(a)
                 yPos = a.index(i)
 
         node.swap(xPos, yPos)
         node.parent = parent
-        node.heuristic = heuristic(node.board, goal)
-        node.gScore = node.gScore + 1
-        node.fScore = node.gScore + node.heuristic
+        node.h = heuristic(node.q, goal)
+        node.g = node.g + 1
+        node.f = node.g + node.h
         
         children.append(node)
 
@@ -120,10 +120,9 @@ def heuristic(n, goal):
             if n[i][j] == goal[i][j]: break # break if no displacement
 
             for a in goal:
-                for b in a:
-                    if b == n[i][j]:
-                        x = goal.index(a)
-                        y = a.index(b)
+                if n[i][j] in a:
+                    x = goal.index(a)
+                    y = a.index(n[i][j])
                 
             distance += abs(i - x) + abs(j - y) # sum of deltas in axis
 
@@ -135,12 +134,12 @@ if __name__ == '__main__':
             [9,  10, 11, 12],
             [13, 14, 15,  0]]
 
-    start = Node([[1,   0,  3,  4],
-                  [5,   2,  7,  8],
-                  [9,   6, 11, 12],
-                  [13, 10, 14,  15]])
+    start = Node([[2,   3,  4,  8],
+                  [1,   5,  6,  0],
+                  [10,  11, 7, 12],
+                  [9, 13, 14,  15]])
     
     for a in solve(start, goal):
-        for b in a.board:
+        for b in a.q:
             print(b)
         print("")
