@@ -9,13 +9,13 @@ class Node:
         self.parent = parent
 
     # swap with zero
-    def swap(self, xPos, yPos): 
+    def swap(self, x, y): 
 
         for a in self.q:
             if 0 in a:
-                self.q[self.q.index(a)][a.index(0)] = self.q[xPos][yPos]
+                self.q[self.q.index(a)][a.index(0)] = self.q[x][y]
                     
-        self.q[xPos][yPos] = 0
+        self.q[x][y] = 0
         self.h = heuristic(self.q, goal) # heuristic has to be reevaluated
 
 # Solve using A* algoritm
@@ -78,10 +78,10 @@ def childrenOf(parent):
         
         for a in node.q:
             if i in a:
-                xPos = node.q.index(a)
-                yPos = a.index(i)
+                x = node.q.index(a)
+                y = a.index(i)
 
-        node.swap(xPos, yPos)
+        node.swap(x, y)
         node.parent = parent
         node.h = heuristic(node.q, goal)
         node.g = node.g + 1
