@@ -43,7 +43,7 @@ def a_star(start, goal, size):
         openNodes.remove(current)
         closedNodes.append(current)
 
-        for node in childrenOf(current, size):
+        for node in childrenOf(current):
 
             if node in closedNodes:
                 continue
@@ -62,11 +62,11 @@ def a_star(start, goal, size):
                 openNodes.append(node)
 
 # Generate successor-nodes of parent
-def childrenOf(parent, size):
+def childrenOf(parent):
             
     children = []
 
-    for i in moves(parent.q, size):
+    for i in moves(parent.q, parent.size):
 
         node = deepcopy(parent)
         
@@ -124,8 +124,8 @@ if __name__ == '__main__':
             [7, 8, 0]]
 
     start = Node([[1, 2, 3],
-                  [4, 5, 6],
-                  [0, 7, 8]], 3)
+                  [7, 8, 5],
+                  [6, 4, 0]], 3)
     
     for a in a_star(start, goal, 3):
         for b in a.q:
