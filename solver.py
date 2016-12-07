@@ -10,7 +10,7 @@ class Node:
         self.parent = parent
 
     # swap with zero
-    def swap(self, x, y): 
+    def swap(self, x, y, goal): 
 
         for a in self.q:
             if 0 in a:
@@ -43,7 +43,7 @@ def a_star(start, goal, size):
         openNodes.remove(current)
         closedNodes.append(current)
 
-        for node in childrenOf(current):
+        for node in childrenOf(current, goal):
 
             if node in closedNodes:
                 continue
@@ -62,7 +62,7 @@ def a_star(start, goal, size):
                 openNodes.append(node)
 
 # Generate successor-nodes of parent
-def childrenOf(parent):
+def childrenOf(parent, goal):
             
     children = []
 
@@ -75,7 +75,7 @@ def childrenOf(parent):
                 x = node.q.index(a)
                 y = a.index(i)
 
-        node.swap(x, y)
+        node.swap(x, y, goal)
         
         children.append(node)
 
@@ -118,20 +118,24 @@ def heuristic(n, goal, size):
 
     return distance
 
-if __name__ == '__main__':
-    goal = [[1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 0]]
 
-    start = Node([[1, 2, 3],
-                  [7, 8, 5],
-                  [6, 4, 0]], 3)
+
+if __name__ == '__main__':
+
+    goal = [[1,   2,  3,  4],
+            [5,   6,  7,  8],
+            [9,  10, 11, 12],
+            [13, 14, 15,  0]]
     
-    for a in a_star(start, goal, 3):
+    start = Node([[1,   2,  3,  4],
+                  [5,   6,  7,  8],
+                  [9,   10, 11, 12],
+                  [13, 0, 14, 15]], 4)
+    
+    for a in a_star(start, goal, 4):
         for b in a.q:
             print(b)
         print("")
-
 
     # layout for 24-puzzle
     # goal = [[1,   2,  3,  4,  5],
