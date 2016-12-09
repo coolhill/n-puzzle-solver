@@ -45,6 +45,13 @@ def a_star(start, goal, size):
 
         for node in childrenOf(current, goal):
 
+            if node.q == goal:
+                path = []
+                while current.parent:
+                    path.append(current.parent)
+                    current = current.parent
+                return path
+
             if node in closedNodes:
                 continue
 
