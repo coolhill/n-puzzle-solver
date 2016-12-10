@@ -1,109 +1,169 @@
-goal = [[1,   2,  3,  4],
-        [5,   6,  7,  8],
-        [9,  10, 11, 12],
-        [13, 14, 15,  0]]
-
-start = [[1,   2,  3,  4],
-         [8,   5,  6,  7],
-         [9,   10, 11, 0],
-         [12, 13, 14, 15]]
-
-openNodes = [[start]]
-closedNodes = []
-
-# Experimental first generation of linked list solution. Linked lists
-# are made up of nodes, where each node contains a reference to the
-# next node in the list. In addition, each node contains a unit of
-# data called the cargo(board).
+from copy import deepcopy
 
 class Node:
-    def __init__(self, board=None, parent=None):
-        self.board = board
-        # self.heuristic = heuristic     # h-value
-        # self.moves = moves             # g-value
+    def __init__(self, q=None, size=None, h=None, g=None, f=None, parent=None):
+        self.q = q     # positions
+        self.h = h     # heuristic
+        self.g = g     # moves
+        self.f = f
+        self.size = size 
         self.parent = parent
 
-    def getBoard(self):
-        return self.board
+    # swap with zero
+    def swap(self, x, y, goal): 
 
-    def switch(xPos, yPos): # switch with zero
-
-        for a in self.board:
-            for b in a:
-                if b == 0:
-                    self.board[self.board.index(a)][a.index(b)] = self.board[xPos][yPos]
+        for a in self.q:
+            if 0 in a:
+                self.q[self.q.index(a)][a.index(0)] = self.q[x][y]
                     
-        self.board[xPos][yPos] = 0
+        self.q[x][y] = 0
+        self.h = heuristic(self.q, goal, self.size) # heuristic has to be reevaluated
 
-        
 # Solve using A* algoritm
-def solve(current, goal):
+def a_star(start, goal, size):
 
-    gen_nodes(moves(current), current)
-    
-    # if closedNodes.count(new) == 1: break
-    # openNodes.append(new.insert(current.index(0), granne))
-        
-    
-def gen_nodes(m, cur):
+    openNodes = [start]
+    closedNodes = []
+
+    start.h = heuristic(start.q, goal, size)
+    start.g = 0 # cost from start to start is zero
+    start.f = heuristic(start.q, goal, size) # in beginning f is completely heuristic
+
+    while openNodes:
+
+        current = sorted(openNodes, key=lambda x: x.f)[0]
+
+        if current.q == goal:
+            path = []
+            while current.parent:
+                path.append(current.parent)
+                current = current.parent
+            return path
+
+        openNodes.remove(current)
+        closedNodes.append(current)
+
+        for node in childrenOf(current, goal):
+
+            if node.q == goal:
+                path = []
+                while current.parent:
+                    path.append(current.parent)
+                    current = current.parent
+                return path
+
+            if node in closedNodes:
+                continue
+
+            if node in openNodes:
+                new_g = current.g + 1
+                if node.g > new_g:
+                    node.g = new_g
+                    node.parent = current
+                
+            else:
+                node.g = current.g + 1
+                node.h = heuristic(node.q, goal, size)
+                node.f = node.g + node.h
+                node.parent = current
+                openNodes.append(node)
+
+# Generate successor-nodes of parent
+def childrenOf(parent, goal):
             
-    # Generate successor-nodes (by the 0's grannar)
-    for i in m:
-        print(i)
+    children = []
 
-        new = Node(cur) # maybe this will fix concurrency bug
+    for i in moves(parent.q, parent.size):
 
-        # There is a problem with commented code below. Uncomment and
-        # see compiler error.
+        node = deepcopy(parent)
         
-        # replace 0 with i and i with 0
-        # for a in new.getBoard():
-        #     for b in a:
-        #         if b == i:
-        #             print(new.getBoard().index(a))
-        #             print(b)
-        #             new.switch(new.getBoard().index(a), b)
+        for a in node.q:
+            if i in a:
+                x = node.q.index(a)
+                y = a.index(i)
 
-        print(new.getBoard())
-    
+        node.swap(x, y, goal)
+        
+        children.append(node)
+
+    return children
+
+
 # Return array of legal moves.
-def moves(m):
+def moves(m, size):
 
     moves = []
     for i in m:
         if (0 in i and m.index(i) != 0): # left?
             moves.append(m[m.index(i) - 1][i.index(0)])
 
-        if (0 in i and m.index(i) != 3): # right?
+        if (0 in i and m.index(i) != size - 1): # right?
             moves.append(m[m.index(i) + 1][i.index(0)])
         
         if (0 in i and i.index(0) != 0): # up?
             moves.append(m[m.index(i)][i.index(0) - 1])
 
-        if (0 in i and i.index(0) != 3): # down?
+        if (0 in i and i.index(0) != size - 1): # down?
             moves.append(m[m.index(i)][i.index(0) + 1])
 
     return moves
     
 # Manhattan distance heuristic    
-def heuristic(n):
+def heuristic(n, goal, size):
 
     distance = 0
-    for i in range(0,3):
-        for j in range(0,3):
-            if n[i][j] == goal[i][j]: break # if no displacement -> break
+    for i in range(0, size - 1):
+        for j in range(0, size - 1):
+            if n[i][j] == goal[i][j]: break # break if no displacement
 
             for a in goal:
-                for b in a:
-                    if b == n[i][j]:
-                        x = goal.index(a)
-                        y = a.index(b)
+                if n[i][j] in a:
+                    x = goal.index(a)
+                    y = a.index(n[i][j])
                 
             distance += abs(i - x) + abs(j - y) # sum of deltas in axis
 
     return distance
 
+
+
 if __name__ == '__main__':
+
+    goal = [[1,   2,  3,  4],
+            [5,   6,  7,  8],
+            [9,  10, 11, 12],
+            [13, 14, 15,  0]]
     
-    solve(start, goal)
-#    print("skoj")
+    start = Node([[1,   2,  3,  4],
+                  [5,   6,  7,  8],
+                  [9,   10, 11, 12],
+                  [13, 0, 14, 15]], 4)
+    
+    for a in a_star(start, goal, 4):
+        for b in a.q:
+            print(b)
+        print("")
+
+    # layout for 24-puzzle
+    # goal = [[1,   2,  3,  4,  5],
+    #         [6,   7,  8,  9, 10],
+    #         [11, 12, 13, 14, 15],
+    #         [16, 17, 18, 19, 20],
+    #         [21, 22, 23, 24,  0]]
+
+    # start = Node([[1,   2,  3,  4,  5],
+    #               [6,   7,  8,  9, 10],
+    #               [11, 12, 13, 14, 15],
+    #               [16, 17, 18, 19, 20],
+    #               [21, 22, 0, 23,  24]], 5)
+
+    # layout for 15-puzzle
+    # goal = [[1,   2,  3,  4],
+    #         [5,   6,  7,  8],
+    #         [9,  10, 11, 12],
+    #         [13, 14, 15,  0]]
+    
+    # start = Node([[2,   3,  4,  0],
+    #               [1,   5,  6,  7],
+    #               [10,  11, 12, 8],
+    #               [9, 13, 14,  15]])
