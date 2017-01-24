@@ -1,6 +1,7 @@
 from copy import deepcopy
 from random import random
 
+
 class Node:
     def __init__(self, q=None, size=None, h=None, g=None, f=None, parent=None):
         self.q = q     # positions
@@ -19,6 +20,7 @@ class Node:
                     
         self.q[x][y] = 0
         self.h = heuristic(self.q, goal, self.size) # heuristic has to be reevaluated
+
 
 # Solve using A* algoritm
 def a_star(start, goal, size):
@@ -109,10 +111,10 @@ def moves(m, size):
 
     return moves
 
-# Return shuffled array 
-def shuffle(q, goal, size, howmanytimesdoyouwanttoshuffle):
+# Return shuffled array
+def shuffle(q, size, howmanytimesdoyouwanttoshuffle):
 
-    node = deepcopy(q)
+    node = deepcopy(Node(q, size))
 
     while(howmanytimesdoyouwanttoshuffle != 0):
         move = moves(node.q, size)[round(random()*len(moves(node.q, size))) - 1]
@@ -122,13 +124,13 @@ def shuffle(q, goal, size, howmanytimesdoyouwanttoshuffle):
                 x = node.q.index(a)
                 y = a.index(move)
 
-        node.swap(x, y, goal)
+        node.swap(x, y, q)
 
         howmanytimesdoyouwanttoshuffle = howmanytimesdoyouwanttoshuffle - 1
 
     return node
 
-# Manhattan distance heuristic    
+# Manhattan distance heuristic
 def heuristic(n, goal, size):
 
     distance = 0
@@ -145,21 +147,19 @@ def heuristic(n, goal, size):
 
     return distance
 
-
-
-if __name__ == '__main__':
+def solve():
 
     goal = [[1,   2,  3,  4],
             [5,   6,  7,  8],
             [9,  10, 11, 12],
             [13, 14, 15,  0]]
-    
-    start = Node([[1,   2,  3,  4],
-                  [5,   6,  7,  8],
-                  [9,   10, 11, 12],
-                  [13, 0, 14, 15]], 4)
 
-    for a in shuffle(start, goal, 4, 100).q:
-        for b in a:
+    start = shuffle(goal, 4, 10).q
+    
+    for a in a_star(Node(start, 4), goal, 4):
+        for b in a.q:
             print(b)
         print("")
+
+if __name__ == '__main__':
+    solve()
