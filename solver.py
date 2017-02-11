@@ -26,7 +26,9 @@ class Node:
 def a_star(start, goal, size):
 
     openNodes = [start]
+    openSet = [start.q]
     closedNodes = []
+    closedSet = []
 
     start.h = heuristic(start.q, goal, size)
     start.g = 0 # cost from start to start is zero
@@ -39,37 +41,32 @@ def a_star(start, goal, size):
         if current.q == goal:
             path = []
             while current.parent:
-                path.append(current.parent)
+                path.append(current.parent.q)
                 current = current.parent
             return path
 
         openNodes.remove(current)
+        openSet.remove(current.q)
         closedNodes.append(current)
+        closedSet.append(current.q)
 
         for node in childrenOf(current, goal):
 
-            if node.q == goal:
-                path = []
-                while current.parent:
-                    path.append(current.parent)
-                    current = current.parent
-                return path
-
-            if node in closedNodes:
+            if node.q in closedSet:
                 continue
 
-            if node in openNodes:
-                new_g = current.g + 1
-                if node.g > new_g:
-                    node.g = new_g
-                    node.parent = current
-                
-            else:
-                node.g = current.g + 1
-                node.h = heuristic(node.q, goal, size)
-                node.f = node.g + node.h
-                node.parent = current
+            new_g = current.g + 1
+
+            if node.q not in openSet:
                 openNodes.append(node)
+                openSet.append(node.q)
+            
+            elif new_g >= node.g:
+                continue
+
+            node.parent = current
+            node.g = new_g
+            node.f = node.g + node.h
 
 # Generate successor-nodes of parent
 def childrenOf(parent, goal):
@@ -136,7 +133,7 @@ def heuristic(n, goal, size):
     distance = 0
     for i in range(0, size - 1):
         for j in range(0, size - 1):
-            if n[i][j] == goal[i][j]: break # break if no displacement
+            if n[i][j] == goal[i][j]: continue # break if no displacement
 
             for a in goal:
                 if n[i][j] in a:
@@ -147,6 +144,7 @@ def heuristic(n, goal, size):
 
     return distance
 
+
 def solve():
 
     goal = [[1,   2,  3,  4],
@@ -154,10 +152,10 @@ def solve():
             [9,  10, 11, 12],
             [13, 14, 15,  0]]
 
-    start = shuffle(goal, 4, 10).q
-    
-    for a in a_star(Node(start, 4), goal, 4):
-        for b in a.q:
+    start = shuffle(goal, 4, 40)
+
+    for a in a_star(start, goal, 4):
+        for b in a:
             print(b)
         print("")
 
