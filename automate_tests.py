@@ -5,16 +5,17 @@ goal = [[1, 2, 3],
         [4, 5, 6],
         [7, 8, 0]]
 
-array = [[[1, 2, 3], [0, 6, 8], [5, 4, 7]],
-         [[1, 2, 3], [6, 0, 8], [5, 4, 7]],
-         [[1, 2, 3], [6, 8, 0], [5, 4, 7]],
-         [[1, 2, 0], [6, 8, 3], [5, 4, 7]],
-         [[1, 0, 2], [6, 8, 3], [5, 4, 7]],
-         [[0, 1, 2], [6, 8, 3], [5, 4, 7]]]
+size = 3
 
-for i in array:
+for i in range(10,50,10):
+
     start_time = time.time()
-    print(a_star(Node(i, 3), goal, 3)[0].g)
-    print("--- %s seconds ---" % (time.time() - start_time))
+    start = shuffle(goal, size, i).q
 
+    for a in a_star(Node(start, size), goal, size):
+        for b in a.q:
+            print(b)
+        print("")
+        
+    print("--- %s seconds ---" % (time.time() - start_time))
 

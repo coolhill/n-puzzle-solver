@@ -1,4 +1,6 @@
 from copy import deepcopy
+from random import random
+
 
 class Node:
     def __init__(self, q=None, size=None, h=None, g=None, f=None, parent=None):
@@ -19,11 +21,14 @@ class Node:
         self.q[x][y] = 0
         self.h = heuristic(self.q, goal, self.size) # heuristic has to be reevaluated
 
+
 # Solve using A* algoritm
 def a_star(start, goal, size):
 
     openNodes = [start]
+    openSet = [start.q]
     closedNodes = []
+    closedSet = []
 
     start.h = heuristic(start.q, goal, size)
     start.g = 0 # cost from start to start is zero
@@ -36,37 +41,32 @@ def a_star(start, goal, size):
         if current.q == goal:
             path = []
             while current.parent:
-                path.append(current.parent)
+                path.append(current.parent.q)
                 current = current.parent
             return path
 
         openNodes.remove(current)
+        openSet.remove(current.q)
         closedNodes.append(current)
+        closedSet.append(current.q)
 
         for node in childrenOf(current, goal):
 
-            if node.q == goal:
-                path = []
-                while current.parent:
-                    path.append(current.parent)
-                    current = current.parent
-                return path
-
-            if node in closedNodes:
+            if node.q in closedSet:
                 continue
 
-            if node in openNodes:
-                new_g = current.g + 1
-                if node.g > new_g:
-                    node.g = new_g
-                    node.parent = current
-                
-            else:
-                node.g = current.g + 1
-                node.h = heuristic(node.q, goal, size)
-                node.f = node.g + node.h
-                node.parent = current
+            new_g = current.g + 1
+
+            if node.q not in openSet:
                 openNodes.append(node)
+                openSet.append(node.q)
+            
+            elif new_g >= node.g:
+                continue
+
+            node.parent = current
+            node.g = new_g
+            node.f = node.g + node.h
 
 # Generate successor-nodes of parent
 def childrenOf(parent, goal):
@@ -107,14 +107,33 @@ def moves(m, size):
             moves.append(m[m.index(i)][i.index(0) + 1])
 
     return moves
-    
-# Manhattan distance heuristic    
+
+# Return shuffled array
+def shuffle(q, size, howmanytimesdoyouwanttoshuffle):
+
+    node = deepcopy(Node(q, size))
+
+    while(howmanytimesdoyouwanttoshuffle != 0):
+        move = moves(node.q, size)[round(random()*len(moves(node.q, size))) - 1]
+        
+        for a in node.q:
+            if move in a:
+                x = node.q.index(a)
+                y = a.index(move)
+
+        node.swap(x, y, q)
+
+        howmanytimesdoyouwanttoshuffle = howmanytimesdoyouwanttoshuffle - 1
+
+    return node
+
+# Manhattan distance heuristic
 def heuristic(n, goal, size):
 
     distance = 0
     for i in range(0, size - 1):
         for j in range(0, size - 1):
-            if n[i][j] == goal[i][j]: break # break if no displacement
+            if n[i][j] == goal[i][j]: continue # break if no displacement
 
             for a in goal:
                 if n[i][j] in a:
@@ -126,44 +145,19 @@ def heuristic(n, goal, size):
     return distance
 
 
-
-if __name__ == '__main__':
+def solve():
 
     goal = [[1,   2,  3,  4],
             [5,   6,  7,  8],
             [9,  10, 11, 12],
             [13, 14, 15,  0]]
-    
-    start = Node([[1,   2,  3,  4],
-                  [5,   6,  7,  8],
-                  [9,   10, 11, 12],
-                  [13, 0, 14, 15]], 4)
-    
+
+    start = shuffle(goal, 4, 40)
+
     for a in a_star(start, goal, 4):
-        for b in a.q:
+        for b in a:
             print(b)
         print("")
 
-    # layout for 24-puzzle
-    # goal = [[1,   2,  3,  4,  5],
-    #         [6,   7,  8,  9, 10],
-    #         [11, 12, 13, 14, 15],
-    #         [16, 17, 18, 19, 20],
-    #         [21, 22, 23, 24,  0]]
-
-    # start = Node([[1,   2,  3,  4,  5],
-    #               [6,   7,  8,  9, 10],
-    #               [11, 12, 13, 14, 15],
-    #               [16, 17, 18, 19, 20],
-    #               [21, 22, 0, 23,  24]], 5)
-
-    # layout for 15-puzzle
-    # goal = [[1,   2,  3,  4],
-    #         [5,   6,  7,  8],
-    #         [9,  10, 11, 12],
-    #         [13, 14, 15,  0]]
-    
-    # start = Node([[2,   3,  4,  0],
-    #               [1,   5,  6,  7],
-    #               [10,  11, 12, 8],
-    #               [9, 13, 14,  15]])
+if __name__ == '__main__':
+    solve()
