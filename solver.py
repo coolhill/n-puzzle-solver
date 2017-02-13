@@ -34,6 +34,8 @@ def a_star(start, goal, size):
     start.g = 0 # cost from start to start is zero
     start.f = heuristic(start.q, goal, size) # in beginning f is completely heuristic
 
+    i = 0
+
     while openNodes:
 
         current = sorted(openNodes, key=lambda x: x.f)[0]
@@ -43,6 +45,7 @@ def a_star(start, goal, size):
             while current.parent:
                 path.append(current.parent.q)
                 current = current.parent
+            print(i)
             return path
 
         openNodes.remove(current)
@@ -50,14 +53,15 @@ def a_star(start, goal, size):
         closedNodes.append(current)
         closedSet.append(current.q)
 
+        new_g = current.g + 1
+        
         for node in childrenOf(current, goal):
 
             if node.q in closedSet:
                 continue
-
-            new_g = current.g + 1
-
+        
             if node.q not in openSet:
+                i = i + 1
                 openNodes.append(node)
                 openSet.append(node.q)
             
@@ -67,6 +71,8 @@ def a_star(start, goal, size):
             node.parent = current
             node.g = new_g
             node.f = node.g + node.h
+
+        
 
 # Generate successor-nodes of parent
 def childrenOf(parent, goal):
